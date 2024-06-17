@@ -2,6 +2,9 @@ package com.project.shopapp.controllers;
 import com.github.javafaker.Faker;
 import com.project.shopapp.components.SecurityUtils;
 import com.project.shopapp.dtos.*;
+import com.project.shopapp.exceptions.DataNotFoundException;
+import com.project.shopapp.models.Comment;
+import com.project.shopapp.models.Product;
 import com.project.shopapp.models.User;
 import com.project.shopapp.responses.ResponseObject;
 import com.project.shopapp.responses.comment.CommentResponse;
@@ -27,7 +30,7 @@ public class CommentController {
     private final CommentService commentService;
     private final SecurityUtils securityUtils;
 
-    @GetMapping("")
+    @GetMapping("/user/comment")
     public ResponseEntity<ResponseObject> getAllComments(
             @RequestParam(value = "user_id", required = false) Long userId,
             @RequestParam("product_id") Long productId
@@ -43,6 +46,18 @@ public class CommentController {
                 .status(HttpStatus.OK)
                 .data(commentResponses)
                 .build());
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseObject> getCommentByProduct(
+            @PathVariable ("id") Long productId
+    )throws DataNotFoundException {
+        List<CommentResponse> commentResponses = commentService.getCommentsByProduct(productId);
+        return ResponseEntity.ok(ResponseObject.builder()
+                        .message("get all comment by product successfully")
+                        .data(commentResponses)
+                        .status(HttpStatus.OK)
+                .build());
+
     }
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
@@ -66,7 +81,7 @@ public class CommentController {
                         HttpStatus.OK, null));
     }
     @PostMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<ResponseObject> insertComment(
             @Valid @RequestBody CommentDTO commentDTO
     ) {
