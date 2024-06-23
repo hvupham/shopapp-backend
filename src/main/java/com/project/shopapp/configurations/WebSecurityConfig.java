@@ -2,6 +2,7 @@ package com.project.shopapp.configurations;
 
 import com.project.shopapp.filters.JwtTokenFilter;
 import com.project.shopapp.models.Role;
+import com.project.shopapp.services.Email.EmailService;
 import com.project.shopapp.services.user.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +35,8 @@ import static org.springframework.http.HttpMethod.*;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
+    private final EmailService emailService;
+
     private final CustomOAuth2UserService oauth2UserService;
     @Value("${api.prefix}")
     private String apiPrefix;
@@ -46,8 +49,10 @@ public class WebSecurityConfig {
                             .requestMatchers(
                                     String.format("%s/users/register", apiPrefix),
                                     String.format("%s/users/login", apiPrefix),
+                                    String.format("%s/users/login/oauth2**",apiPrefix),
                                     //healthcheck
                                     String.format("%s/healthcheck/**", apiPrefix),
+
 
                                     //swagger
                                     //"/v3/api-docs",
@@ -65,6 +70,15 @@ public class WebSecurityConfig {
 
                             )
                             .permitAll()
+                            .requestMatchers(String.format("%s/oauth2/login/google", apiPrefix)).permitAll()
+                            .requestMatchers(String.format("%s/oauth2/login/facebook", apiPrefix)).permitAll()
+                            .requestMatchers(String.format("%s/emails/users/**", apiPrefix)).permitAll()
+                            .requestMatchers(String.format("%s/emails/users", apiPrefix)).permitAll()
+                            .requestMatchers(String.format("%s/facebooks/users/**", apiPrefix)).permitAll()
+                            .requestMatchers(String.format("%s/facebooks/users", apiPrefix)).permitAll()
+                            .requestMatchers(String.format("%s/users/login/oauth2/**", apiPrefix)).permitAll()
+                            .requestMatchers(String.format("%s/users/phone_number", apiPrefix)).permitAll()
+                            .requestMatchers(String.format("%s/users/phone/**", apiPrefix)).permitAll()
                             .requestMatchers(GET,
                                     String.format("%s/roles**", apiPrefix)).permitAll()
 
@@ -87,7 +101,9 @@ public class WebSecurityConfig {
                             .authenticated();
                             //.anyRequest().permitAll();
                 })
-                .csrf(AbstractHttpConfigurer::disable);
+                .csrf(AbstractHttpConfigurer::disable)
+                .oauth2Login()
+        ;
         http.securityMatcher(String.valueOf(EndpointRequest.toAnyEndpoint()));
         return http.build();
     }
