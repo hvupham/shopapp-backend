@@ -18,7 +18,9 @@ public interface IUserService {
     String login(UserLoginDTO userLoginDT) throws Exception;
     User getUserDetailsFromToken(String token) throws Exception;
     User getUserDetailsFromRefreshToken(String token) throws Exception;
+
     User updateUser(Long userId, UpdateUserDTO updatedUserDTO) throws Exception;
+    String loginByOAuth2(String phoneNumber, String email) throws Exception;
 
     Page<User> findAll(String keyword, Pageable pageable) throws Exception;
     void resetPassword(Long userId, String newPassword)

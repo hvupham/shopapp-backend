@@ -19,7 +19,7 @@ public class Facebook {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
+        private Integer id;
 
         @Column(name = "facebook_id")
         @JsonProperty("facebook_id")

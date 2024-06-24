@@ -16,6 +16,8 @@ import com.project.shopapp.repositories.TokenRepository;
 import com.project.shopapp.repositories.UserRepository;
 import com.project.shopapp.utils.MessageKeys;
 import com.project.shopapp.utils.ValidationUtils;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -30,10 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import static com.project.shopapp.utils.ValidationUtils.isValidEmail;
-
 @RequiredArgsConstructor
 @Service
-public class    UserService implements IUserService{
+public class UserService implements IUserService{
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final TokenRepository tokenRepository;
@@ -133,6 +134,7 @@ public class    UserService implements IUserService{
         authenticationManager.authenticate(authenticationToken);
         return jwtTokenUtil.generateToken(existingUser);
     }
+
     @Transactional
     @Override
     public User updateUser(Long userId, UpdateUserDTO updatedUserDTO) throws Exception {
@@ -241,6 +243,21 @@ public class    UserService implements IUserService{
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
         existingUser.setProfileImage(imageName);
         userRepository.save(existingUser);
+    }
+    @Override
+    public String loginByOAuth2(String phoneNumber, String email) throws Exception {
+        Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
+        if (optionalUser.isEmpty()){
+            throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.WRONG_PHONE_PASSWORD));
+        }
+        User existingUser = optionalUser.get();
+        if (email.equals(existingUser.getEmail())) {
+            if (!optionalUser.get().isActive()) {
+                throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.USER_IS_LOCKED));
+            }
+            return jwtTokenUtil.generateToken(existingUser);
+        }
+        return "";
     }
 }
 

@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("${api.prefix}/oauth2")
-public class Auth2Controller {
+public class OAuth2Controller {
     @GetMapping("/login/google")
     @PermitAll
     public ResponseEntity<?> currentUserGoogle(

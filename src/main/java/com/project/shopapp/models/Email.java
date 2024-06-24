@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class Email {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "picture")
     private String picture;

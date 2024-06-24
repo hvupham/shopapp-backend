@@ -5,6 +5,7 @@ import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.exceptions.InvalidPasswordException;
 import com.project.shopapp.models.Token;
 import com.project.shopapp.models.User;
+import com.project.shopapp.responses.CheckSocialAccountResponse;
 import com.project.shopapp.responses.ResponseObject;
 import com.project.shopapp.responses.user.LoginResponse;
 import com.project.shopapp.responses.user.UserListResponse;
@@ -28,6 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -36,6 +38,7 @@ import com.project.shopapp.dtos.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -157,6 +160,31 @@ public class UserController {
                         .data(loginResponse)
                         .status(HttpStatus.OK)
                 .build());
+    }
+    @GetMapping("/login/oauth2")
+    public ResponseEntity<?> loginOAuth2(
+            @RequestParam("email") String email,
+            @RequestParam("phone_number") String phoneNumber) {
+        try {
+            return ResponseEntity.ok(
+                    CheckSocialAccountResponse.builder()
+                            .message(this.userService.loginByOAuth2(phoneNumber, email))
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(LoginResponse.builder()
+                    .message(
+                            localizationUtils
+                                    .getLocalizedMessage(MessageKeys.LOGIN_FAILED, e.getMessage())
+                    )
+                    .build());
+        }
+    }
+    @GetMapping("/login/google")
+    public Map<String, Object> currentUserGoogle(
+            OAuth2AuthenticationToken oAuth2AuthenticationToken
+    ){
+        return oAuth2AuthenticationToken.getPrincipal().getAttributes();
     }
     @PostMapping("/refreshToken")
     public ResponseEntity<ResponseObject> refreshToken(
