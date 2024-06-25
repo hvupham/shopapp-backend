@@ -14,8 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.reactive.EndpointRequest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -37,6 +39,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -52,7 +55,9 @@ public class WebSecurityConfig {
     private final EmailService emailService;
     private final FacebookService facebookService;
     private final CustomOAuth2UserService oauth2UserService;
-    private final IUserService userService;
+    private final ApplicationContext context;
+//    private final UserService userService;
+
 
     @Value("${api.prefix}")
     private String apiPrefix;
@@ -251,6 +256,7 @@ public class WebSecurityConfig {
     }
 @Bean
 public AuthenticationSuccessHandler authenticationSuccessHandler() {
+
     return (request, response, authentication) -> {
         Integer id = 0;
         String type = "";
@@ -265,22 +271,26 @@ public AuthenticationSuccessHandler authenticationSuccessHandler() {
                     .picture(picture)
                     .build());
 
+
             // Tiếp tục lấy các thông tin khác nếu cần
             // Sau đó thực hiện lưu thông tin vào cơ sở dữ liệu
             id = this.emailService.getUserByEmail(email).getId();
             type="email";
-            try{
-                UserDTO userDTO = UserDTO.builder()
-                        .fullName(name)
-                        .password("1344")
-                        .googleAccountId(id)
-                        .roleId(1L)
-                        .build();
-                userService.createUser(userDTO);
-            }
-            catch (Exception e){
-                e.getMessage();
-            }
+//            UserService userService = context.getBean(UserService.class);
+//            try{
+//                UserDTO userDTO = UserDTO.builder()
+//                        .fullName(name)
+//                        .googleAccountId(id)
+//                        .email(email)
+//                        .roleId(1L)
+//                        .build();
+//                userService.createUser(userDTO);
+//            }
+//            catch (Exception e){
+//                e.getMessage();
+//            }
+
+
         } else {
             if (authentication.getPrincipal() instanceof OAuth2User) {
                 OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();

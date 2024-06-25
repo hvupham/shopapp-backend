@@ -18,7 +18,7 @@ public class UserDTO {
     private String fullName;
 
     @JsonProperty("phone_number")
-    private String phoneNumber = "";
+    private String phoneNumber = " ";
 
     @JsonProperty("email")
     private String email = "";
@@ -32,13 +32,13 @@ public class UserDTO {
     private String retypePassword = "";
 
     @JsonProperty("date_of_birth")
-    private Date dateOfBirth;
+    private Date dateOfBirth = new Date();
 
     @JsonProperty("facebook_account_id")
     private int facebookAccountId;
 
     @JsonProperty("google_account_id")
-    private int googleAccountId;
+    private int googleAccountId = 0;
 
     @NotNull(message = "Role ID is required")
     @JsonProperty("role_id")

@@ -163,12 +163,12 @@ public class UserController {
     }
     @GetMapping("/login/oauth2")
     public ResponseEntity<?> loginOAuth2(
-            @RequestParam("email") String email,
-            @RequestParam("phone_number") String phoneNumber) {
+            @RequestParam("email") String email
+) {
         try {
             return ResponseEntity.ok(
                     CheckSocialAccountResponse.builder()
-                            .message(this.userService.loginByOAuth2(phoneNumber, email))
+                            .message(this.userService.loginByOAuth2(email))
                             .build()
             );
         } catch (Exception e) {

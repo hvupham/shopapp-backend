@@ -5,3 +5,4 @@ CREATE TABLE IF NOT EXISTS facebooks (
    name VARCHAR(255) DEFAULT '',
    email VARCHAR(255) DEFAULT ''
 );
+

@@ -17,6 +17,8 @@ public class MessageKeys {
     public static final String UPLOAD_IMAGES_FILE_MUST_BE_IMAGE = "product.upload_images.file_must_be_image";
     public static final String INSERT_CATEGORY_FAILED = "category.create_category.create_failed";
     public static final String WRONG_PHONE_PASSWORD = "user.login.wrong_phone_password";
+    public static final String WRONG_EMAIL_PASSWORD = "user.login.wrong_email_password";
+
     public static final String ROLE_DOES_NOT_EXISTS = "user.login.role_not_exist";
 
 

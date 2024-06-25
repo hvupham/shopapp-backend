@@ -14,8 +14,12 @@ public class EmailService implements IEmailService{
     private final EmailRepository emailRepository;
     @Override
     public Email createUser(EmailDTO emailDTO) {
+        // set id bat dau tu 1
+        Integer lastId = emailRepository.findLastIdEmail();
+        Integer nextId = (lastId == null) ? 1 : lastId + 1;
         if (emailRepository.findByEmail(emailDTO.getEmail()).isEmpty()){
             Email email  = Email.builder()
+                    .id(nextId)
                     .email(emailDTO.getEmail())
                     .name(emailDTO.getName())
                     .picture(emailDTO.getPicture())
@@ -26,7 +30,7 @@ public class EmailService implements IEmailService{
     }
 
     @Override
-    public Email getUserById(long id) throws DataNotFoundException {
+    public Email GetEmailById(long id) throws DataNotFoundException {
         return this.emailRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Can not find email with id: "+id));
     }

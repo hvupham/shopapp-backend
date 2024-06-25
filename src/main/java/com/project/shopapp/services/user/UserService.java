@@ -134,6 +134,21 @@ public class UserService implements IUserService{
         authenticationManager.authenticate(authenticationToken);
         return jwtTokenUtil.generateToken(existingUser);
     }
+    @Override
+    public String loginByOAuth2(String email) throws Exception {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isEmpty()){
+            throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.WRONG_EMAIL_PASSWORD));
+        }
+        User existingUser = optionalUser.get();
+        if (email.equals(existingUser.getEmail())) {
+            if (!optionalUser.get().isActive()) {
+                throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.USER_IS_LOCKED));
+            }
+            return jwtTokenUtil.generateToken(existingUser);
+        }
+        return "";
+    }
 
     @Transactional
     @Override
@@ -244,21 +259,7 @@ public class UserService implements IUserService{
         existingUser.setProfileImage(imageName);
         userRepository.save(existingUser);
     }
-    @Override
-    public String loginByOAuth2(String phoneNumber, String email) throws Exception {
-        Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
-        if (optionalUser.isEmpty()){
-            throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.WRONG_PHONE_PASSWORD));
-        }
-        User existingUser = optionalUser.get();
-        if (email.equals(existingUser.getEmail())) {
-            if (!optionalUser.get().isActive()) {
-                throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.USER_IS_LOCKED));
-            }
-            return jwtTokenUtil.generateToken(existingUser);
-        }
-        return "";
-    }
+
 }
 
 

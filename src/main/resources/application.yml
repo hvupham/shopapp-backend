@@ -1,6 +1,9 @@
 server:
   port: 8088  
 spring:
+  # cho phep tham chieu vong
+  main:
+    allow-circular-references: true
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/shopapp?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
     #url: ${SPRING_DATASOURCE_URL:jdbc:mysql://ubuntu-server-01.local:3399/ShopApp?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
@@ -63,6 +66,8 @@ spring:
 
             clientSecret: ${GOOGLE_CLIENT_SECRET}
             redirectUri: "http://localhost:8088/login/oauth2/code/google"
+#            redirectUri: "localhost://{api.prefix}/login/oauth2/code/google"
+
 
           facebook:
             clientId: YOUR_FACEBOOK_APP_ID
