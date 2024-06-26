@@ -15,9 +15,6 @@ import com.project.shopapp.repositories.RoleRepository;
 import com.project.shopapp.repositories.TokenRepository;
 import com.project.shopapp.repositories.UserRepository;
 import com.project.shopapp.utils.MessageKeys;
-import com.project.shopapp.utils.ValidationUtils;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -82,6 +79,11 @@ public class UserService implements IUserService{
             newUser.setPassword(encodedPassword);
         }
         return userRepository.save(newUser);
+    }
+
+    @Override
+    public User findByggId(Integer id)  {
+        return userRepository.findByGoogleAccountId(id);
     }
 
     @Override

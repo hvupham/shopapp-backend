@@ -3,8 +3,10 @@ package com.project.shopapp.configurations;
 import com.project.shopapp.dtos.EmailDTO;
 import com.project.shopapp.dtos.FacebookDTO;
 import com.project.shopapp.dtos.UserDTO;
+import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.filters.JwtTokenFilter;
 import com.project.shopapp.models.Role;
+import com.project.shopapp.models.User;
 import com.project.shopapp.services.Email.EmailService;
 import com.project.shopapp.services.Facebook.FacebookService;
 import com.project.shopapp.services.user.CustomOAuth2UserService;
@@ -13,7 +15,6 @@ import com.project.shopapp.services.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.autoconfigure.security.reactive.EndpointRequest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +30,6 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -37,11 +37,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.ServiceLoader;
 
-import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -54,9 +51,6 @@ public class WebSecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
     private final EmailService emailService;
     private final FacebookService facebookService;
-    private final CustomOAuth2UserService oauth2UserService;
-    private final ApplicationContext context;
-//    private final UserService userService;
 
 
     @Value("${api.prefix}")
@@ -254,8 +248,9 @@ public class WebSecurityConfig {
 
         return http.build();
     }
-@Bean
-public AuthenticationSuccessHandler authenticationSuccessHandler() {
+
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
 
     return (request, response, authentication) -> {
         Integer id = 0;
@@ -270,24 +265,22 @@ public AuthenticationSuccessHandler authenticationSuccessHandler() {
                     .name(name)
                     .picture(picture)
                     .build());
-
-
             // Tiếp tục lấy các thông tin khác nếu cần
             // Sau đó thực hiện lưu thông tin vào cơ sở dữ liệu
             id = this.emailService.getUserByEmail(email).getId();
             type="email";
-//            UserService userService = context.getBean(UserService.class);
-//            try{
-//                UserDTO userDTO = UserDTO.builder()
-//                        .fullName(name)
-//                        .googleAccountId(id)
-//                        .email(email)
-//                        .roleId(1L)
-//                        .build();
-//                userService.createUser(userDTO);
-//            }
-//            catch (Exception e){
-//                e.getMessage();
+//            User existingUser = userService.findByggId(id);
+//            if (existingUser == null){
+//                try {
+//                    userService.createUser(UserDTO.builder()
+//                            .fullName(name)
+//                            .googleAccountId(id)
+//                            .email(email)
+//                                    .roleId(1L)
+//                            .build());
+//                } catch (Exception e) {
+//                    throw new RuntimeException(e);
+//                }
 //            }
 
 

@@ -3,8 +3,10 @@ package com.project.shopapp.controllers;
 import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.models.Email;
 import com.project.shopapp.responses.CheckSocialAccountResponse;
+import com.project.shopapp.responses.ResponseObject;
 import com.project.shopapp.services.Email.EmailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +20,11 @@ public class EmailController {
             @PathVariable("id") Long id
     ) throws DataNotFoundException {
         Email emailResponse = this.emailService.GetEmailById(id);
-        return ResponseEntity.ok(emailResponse);
+        return ResponseEntity.ok(ResponseObject.builder()
+                .data(emailResponse)
+                .message("Get category information successfully")
+                .status(HttpStatus.OK)
+                .build());
     }
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers(

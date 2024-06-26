@@ -15,6 +15,9 @@ import java.io.IOException;
 
 public interface IUserService {
     User createUser(UserDTO userDTO) throws Exception;
+
+    User findByggId(Integer id) ;
+
     String login(UserLoginDTO userLoginDT) throws Exception;
     User getUserDetailsFromToken(String token) throws Exception;
     User getUserDetailsFromRefreshToken(String token) throws Exception;

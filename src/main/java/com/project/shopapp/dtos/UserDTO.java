@@ -35,7 +35,7 @@ public class UserDTO {
     private Date dateOfBirth = new Date();
 
     @JsonProperty("facebook_account_id")
-    private int facebookAccountId;
+    private int facebookAccountId = 0;
 
     @JsonProperty("google_account_id")
     private int googleAccountId = 0;
