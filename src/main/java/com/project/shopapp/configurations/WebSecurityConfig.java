@@ -109,9 +109,10 @@ public class WebSecurityConfig {
                                     String.format("%s/roles**",apiPrefix))
                             .permitAll()
 
+//                            .requestMatchers(HttpMethod.GET,
+//                                    String.format("%s/users**",apiPrefix)).hasRole(Role.ADMIN)
                             .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/users**",apiPrefix)).hasRole(Role.ADMIN)
-
+                                    String.format("%s/users**",apiPrefix)).permitAll()
                             .requestMatchers(HttpMethod.GET,
                                     String.format("%s/users/get-districts/**",apiPrefix)).permitAll()
 
@@ -123,6 +124,9 @@ public class WebSecurityConfig {
 
                             .requestMatchers(HttpMethod.GET,
                                     String.format("%s/users/upload/image",apiPrefix)).hasAnyRole(Role.ADMIN, Role.USER)
+                            .requestMatchers(HttpMethod.GET,
+                                    String.format("%s/users/phone**",apiPrefix)).permitAll()
+// ---------------------------------------------------------------------------------------------------------------------------------------------------
 
                             .requestMatchers(HttpMethod.GET,
                                     String.format("%s/categories**",apiPrefix)).permitAll()
@@ -143,6 +147,9 @@ public class WebSecurityConfig {
                             .requestMatchers(HttpMethod.POST,
                                     String.format("%s/comments/get_comments_by_id/**",apiPrefix)
                             ).hasAnyRole(Role.ADMIN, Role.USER)
+                            .requestMatchers(HttpMethod.GET,
+                                    String.format("%s/comments/**",apiPrefix)
+                            ).permitAll()
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
 
                             .requestMatchers(HttpMethod.GET,
@@ -224,9 +231,9 @@ public class WebSecurityConfig {
                             .requestMatchers(HttpMethod.DELETE,
                                     String.format("%s/coupons/**",apiPrefix)).hasAnyRole(Role.ADMIN)
 
-                            .anyRequest().authenticated();
+                            .anyRequest().permitAll();
                 })
-                .csrf(AbstractHttpConfigurer::disable)
+//                .csrf(AbstractHttpConfigurer::disable)
                 .oauth2Login(withDefaults());
         http.cors(Customizer.withDefaults());
 

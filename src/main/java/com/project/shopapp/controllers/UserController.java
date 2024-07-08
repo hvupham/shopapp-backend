@@ -5,6 +5,7 @@ import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.exceptions.InvalidPasswordException;
 import com.project.shopapp.models.Token;
 import com.project.shopapp.models.User;
+import com.project.shopapp.repositories.UserRepository;
 import com.project.shopapp.responses.CheckSocialAccountResponse;
 import com.project.shopapp.responses.ResponseObject;
 import com.project.shopapp.responses.user.LoginResponse;
@@ -50,6 +51,18 @@ public class UserController {
     private final LocalizationUtils localizationUtils;
     private final ITokenService tokenService;
     private final SecurityUtils securityUtils;
+    private final UserRepository userRepository;
+    @GetMapping("/phone")
+    public ResponseEntity<?> getUserByPhone(
+            @RequestParam("phone") String phone
+    ){
+        User user = userRepository.findUsersByPhoneNumber(phone);
+        return ResponseEntity.ok().body(ResponseObject.builder()
+                        .message("successfully")
+                        .data(user)
+                        .status(HttpStatus.OK)
+                .build());
+    }
 
     @GetMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")

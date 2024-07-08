@@ -8,21 +8,25 @@ import com.project.shopapp.services.Email.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("${api.prefix}/emails")
+@RequiredArgsConstructor
+
 public class EmailController {
     private final EmailService emailService;
+
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUesrs(
+//    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> getUsers(
             @PathVariable("id") Long id
     ) throws DataNotFoundException {
         Email emailResponse = this.emailService.GetEmailById(id);
         return ResponseEntity.ok(ResponseObject.builder()
                 .data(emailResponse)
-                .message("Get category information successfully")
+                .message("Get email information successfully")
                 .status(HttpStatus.OK)
                 .build());
     }

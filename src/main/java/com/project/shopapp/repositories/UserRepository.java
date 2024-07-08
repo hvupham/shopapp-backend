@@ -16,6 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByPhoneNumber(String phoneNumber);
     Optional<User> findByEmail(String email);
     User findByGoogleAccountId(Integer id);
+    User findUsersByPhoneNumber(String phone);
     //SELECT * FROM users WHERE phoneNumber=?
     //query command
     @Query("SELECT o FROM User o WHERE o.active = true AND (:keyword IS NULL OR :keyword = '' OR " +

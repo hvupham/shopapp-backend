@@ -4,10 +4,12 @@ import com.project.shopapp.components.SecurityUtils;
 import com.project.shopapp.dtos.*;
 import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.models.Comment;
+import com.project.shopapp.models.Email;
 import com.project.shopapp.models.Product;
 import com.project.shopapp.models.User;
 import com.project.shopapp.responses.ResponseObject;
 import com.project.shopapp.responses.comment.CommentResponse;
+import com.project.shopapp.services.Email.EmailService;
 import com.project.shopapp.services.comment.CommentService;
 import com.project.shopapp.services.product.ProductService;
 import jakarta.validation.Valid;
@@ -29,7 +31,7 @@ import java.util.Objects;
 public class CommentController {
     private final CommentService commentService;
     private final SecurityUtils securityUtils;
-
+    private final EmailService emailService;
     @GetMapping("/user/comment")
     public ResponseEntity<ResponseObject> getAllComments(
             @RequestParam(value = "user_id", required = false) Long userId,
@@ -57,7 +59,18 @@ public class CommentController {
                         .data(commentResponses)
                         .status(HttpStatus.OK)
                 .build());
-
+    }
+    @GetMapping("/emails/{id}")
+//    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> getUsers(
+            @PathVariable("id") Long id
+    ) throws DataNotFoundException {
+        Email emailResponse = this.emailService.GetEmailById(id);
+        return ResponseEntity.ok(ResponseObject.builder()
+                .data(emailResponse)
+                .message("Get email information successfully")
+                .status(HttpStatus.OK)
+                .build());
     }
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
