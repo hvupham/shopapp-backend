@@ -5,6 +5,7 @@ import com.project.shopapp.models.Email;
 import com.project.shopapp.responses.CheckSocialAccountResponse;
 import com.project.shopapp.responses.ResponseObject;
 import com.project.shopapp.services.Email.EmailService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,18 @@ import org.springframework.web.bind.annotation.*;
 
 public class EmailController {
     private final EmailService emailService;
+
+    @GetMapping ("/email/{mail}")
+    public  ResponseEntity<?> getEmailByEmail(
+            HttpServletRequest request,
+            @PathVariable("mail") String email
+    ){
+        return ResponseEntity.ok().body(ResponseObject.builder()
+                        .status(HttpStatus.OK)
+                        .message("ok")
+                        .data(emailService.getUserByEmail(email))
+                .build());
+    }
 
     @GetMapping("/{id}")
 //    @PreAuthorize("permitAll()")

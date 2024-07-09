@@ -52,9 +52,20 @@ public class UserController {
     private final ITokenService tokenService;
     private final SecurityUtils securityUtils;
     private final UserRepository userRepository;
-    @GetMapping("/phone")
+
+    @GetMapping("existingUser")
+    public ResponseEntity<?> existingUser(
+            @RequestParam(defaultValue = " ") Long gg_id
+    ){
+        return ResponseEntity.ok().body(ResponseObject.builder()
+                        .status(HttpStatus.OK)
+                        .data(userRepository.existsByGoogleAccountId(gg_id))
+                .message("ok").build());
+    }
+    @GetMapping("/phone/{phoneNumber}")
     public ResponseEntity<?> getUserByPhone(
-            @RequestParam("phone") String phone
+            HttpServletRequest request,
+            @PathVariable("phoneNumber") String phone
     ){
         User user = userRepository.findUsersByPhoneNumber(phone);
         return ResponseEntity.ok().body(ResponseObject.builder()
@@ -66,6 +77,7 @@ public class UserController {
 
     @GetMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+
     public ResponseEntity<ResponseObject> getAllUser(
             @RequestParam(defaultValue = "", required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
