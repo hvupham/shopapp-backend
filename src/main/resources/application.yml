@@ -1,6 +1,7 @@
 server:
   port: 8088  
 spring:
+
   # cho phep tham chieu vong
   main:
     allow-circular-references: true
@@ -58,6 +59,7 @@ spring:
     consumer:
       value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
   security:
+    enabled: false
     oauth2:      
       client:
         registration:

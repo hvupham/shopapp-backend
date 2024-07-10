@@ -1,12 +1,13 @@
 package com.project.shopapp.controllers;
 
+
 import com.project.shopapp.models.Role;
 import com.project.shopapp.responses.ResponseObject;
 import com.project.shopapp.services.role.RoleService;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,9 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("${api.prefix}/test")
+@RequestMapping("${api.prefix}/a")
 @RequiredArgsConstructor
-@CrossOrigin("*")
 public class TestController {
     private final RoleService roleService;
     @GetMapping("")
@@ -27,5 +27,9 @@ public class TestController {
                 .status(HttpStatus.OK)
                 .data(roles)
                 .build());
+    }
+    @GetMapping("/et")
+    public int test(){
+        return 1;
     }
 }

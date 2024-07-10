@@ -32,6 +32,10 @@ public class CommentController {
     private final CommentService commentService;
     private final SecurityUtils securityUtils;
     private final EmailService emailService;
+    @GetMapping("/test")
+    public int Test(){
+        return 111;
+    }
     @GetMapping("/user/comment")
     public ResponseEntity<ResponseObject> getAllComments(
             @RequestParam(value = "user_id", required = false) Long userId,

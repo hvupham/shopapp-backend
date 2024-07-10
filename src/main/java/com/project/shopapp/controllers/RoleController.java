@@ -25,8 +25,4 @@ public class RoleController {
                         .data(roles)
                 .build());
     }
-    @GetMapping("/et")
-    public int test(){
-        return 1;
-    }
 }
