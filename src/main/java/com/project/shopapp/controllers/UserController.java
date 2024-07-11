@@ -3,6 +3,7 @@ package com.project.shopapp.controllers;
 import com.project.shopapp.components.SecurityUtils;
 import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.exceptions.InvalidPasswordException;
+import com.project.shopapp.models.Email;
 import com.project.shopapp.models.Token;
 import com.project.shopapp.models.User;
 import com.project.shopapp.repositories.UserRepository;
@@ -11,6 +12,7 @@ import com.project.shopapp.responses.ResponseObject;
 import com.project.shopapp.responses.user.LoginResponse;
 import com.project.shopapp.responses.user.UserListResponse;
 import com.project.shopapp.responses.user.UserResponse;
+import com.project.shopapp.services.Email.EmailService;
 import com.project.shopapp.services.token.ITokenService;
 import com.project.shopapp.services.user.IUserService;
 import com.project.shopapp.components.LocalizationUtils;
@@ -52,6 +54,7 @@ public class UserController {
     private final ITokenService tokenService;
     private final SecurityUtils securityUtils;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
     @GetMapping("existingUser")
     public ResponseEntity<?> existingUser(
@@ -186,14 +189,28 @@ public class UserController {
                         .status(HttpStatus.OK)
                 .build());
     }
-    @GetMapping("/login/oauth2")
+    @PostMapping("/login/oauth2")
     public ResponseEntity<?> loginOAuth2(
-            @RequestParam("email") String email
+            @RequestParam("email") String email,
+            HttpServletRequest request
+
 ) {
+
         try {
+            String token = userService.loginByOAuth2(email);
+            String userAgent = request.getHeader("User-Agent");
+            User userDetail = userService.getUserDetailsFromToken(token);
+            Token jwtToken = tokenService.addToken(userDetail, token, isMobileDevice(userAgent));
+            Email existingEmail = emailService.getUserByEmail(email);
             return ResponseEntity.ok(
-                    CheckSocialAccountResponse.builder()
-                            .message(this.userService.loginByOAuth2(email))
+                    LoginResponse.builder()
+                            .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_SUCCESSFULLY))
+                            .token(jwtToken.getToken())
+                            .tokenType(jwtToken.getTokenType())
+                            .refreshToken(jwtToken.getRefreshToken())
+                            .username(existingEmail.getName())
+                            .roles(userDetail.getAuthorities().stream().map(item -> item.getAuthority()).toList())
+                            .id(userDetail.getId())
                             .build()
             );
         } catch (Exception e) {

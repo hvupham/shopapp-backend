@@ -46,18 +46,18 @@ spring:
       host: ${REDIS_HOST:localhost} # Default to 'localhost' if not provided
       #host: ${REDIS_HOST:ubuntu-server-01.local} # Default to 'localhost' if not provided
       port: ${REDIS_PORT:6379}      # Default to 6379 if not provided
-  kafka:
-    client:
-      dns:
-        lookup: use_dns_cache
-    bootstrap-servers: ${KAFKA_BROKER_SERVER:localhost}:${KAFKA_BROKER_PORT:9092}
-    producer:
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      #transaction-id-prefix: tx.
-      properties:
-        "[spring.json.type.mapping]": category:com.project.shopapp.models.Category
-    consumer:
-      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+#  kafka:
+#    client:
+#      dns:
+#        lookup: use_dns_cache
+#    bootstrap-servers: ${KAFKA_BROKER_SERVER:localhost}:${KAFKA_BROKER_PORT:9092}
+#    producer:
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#      #transaction-id-prefix: tx.
+#      properties:
+#        "[spring.json.type.mapping]": category:com.project.shopapp.models.Category
+#    consumer:
+#      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
   security:
     enabled: false
     oauth2:      

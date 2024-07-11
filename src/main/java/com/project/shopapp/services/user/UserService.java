@@ -14,6 +14,7 @@ import com.project.shopapp.models.*;
 import com.project.shopapp.repositories.RoleRepository;
 import com.project.shopapp.repositories.TokenRepository;
 import com.project.shopapp.repositories.UserRepository;
+import com.project.shopapp.services.Email.EmailService;
 import com.project.shopapp.utils.MessageKeys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -40,6 +41,7 @@ public class UserService implements IUserService{
     private final AuthenticationManager authenticationManager;
     private final LocalizationUtils localizationUtils;
     private static String UPLOADS_FOLDER = "uploads";
+    private final EmailService emailService;
 
     @Override
     @Transactional
@@ -98,7 +100,9 @@ public class UserService implements IUserService{
 
         // If the user is not found by phone number, check by email
         if (optionalUser.isEmpty() && userLoginDTO.getEmail() != null) {
-            optionalUser = userRepository.findByEmail(userLoginDTO.getEmail());
+            Email existingEmail = emailService.getUserByEmail(userLoginDTO.getEmail());
+//            optionalUser = userRepository.findByEmail(userLoginDTO.getEmail());
+            optionalUser = userRepository.findUsersByGoogleAccountId(existingEmail.getId());
             subject = userLoginDTO.getEmail();
         }
 
@@ -138,18 +142,19 @@ public class UserService implements IUserService{
     }
     @Override
     public String loginByOAuth2(String email) throws Exception {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        Email existingEmail = emailService.getUserByEmail(email);
+        Optional<User> optionalUser = userRepository.findUsersByGoogleAccountId(existingEmail.getId());
         if (optionalUser.isEmpty()){
             throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.WRONG_EMAIL_PASSWORD));
         }
         User existingUser = optionalUser.get();
-        if (email.equals(existingUser.getEmail())) {
-            if (!optionalUser.get().isActive()) {
-                throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.USER_IS_LOCKED));
-            }
-            return jwtTokenUtil.generateToken(existingUser);
-        }
-        return "";
+//        if (email.equals(existingUser.getEmail())) {
+//            if (!optionalUser.get().isActive()) {
+//                throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.USER_IS_LOCKED));
+//            }
+//            return jwtTokenUtil.generateToken(existingUser);
+//        }
+        return jwtTokenUtil.generateToken(existingUser);
     }
 
     @Transactional
