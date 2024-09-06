@@ -6,10 +6,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SecurityUtils {
-
     public User getLoggedInUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof User) {
+        if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof User) {
             return (User) authentication.getPrincipal();
         }
         return null;
