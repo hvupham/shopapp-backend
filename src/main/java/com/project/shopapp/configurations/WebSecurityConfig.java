@@ -2,36 +2,25 @@ package com.project.shopapp.configurations;
 
 import com.project.shopapp.dtos.EmailDTO;
 import com.project.shopapp.dtos.FacebookDTO;
-import com.project.shopapp.dtos.UserDTO;
-import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.filters.JwtTokenFilter;
 import com.project.shopapp.models.Email;
-import com.project.shopapp.models.Role;
-import com.project.shopapp.models.User;
 import com.project.shopapp.repositories.EmailRepository;
 import com.project.shopapp.services.Email.EmailService;
 import com.project.shopapp.services.Facebook.FacebookService;
-import com.project.shopapp.services.user.CustomOAuth2UserService;
-import com.project.shopapp.services.user.IUserService;
-import com.project.shopapp.services.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -65,173 +54,11 @@ public class WebSecurityConfig {
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(requests -> {
                     requests
-
-                             .requestMatchers(HttpMethod.GET,
-                            String.format("%s/payments/**",apiPrefix)).hasAnyRole(Role.USER, Role.ADMIN)
-
-                            .requestMatchers(
-                                    String.format("%s/users/register",apiPrefix),
-                                    String.format("%s/users/login",apiPrefix),
-                                    String.format("%s/users/login/oauth2**",apiPrefix)
-                            )
-                            .permitAll()
-
-                            .requestMatchers(HttpMethod.POST,
-                                    String.format("%s/users/details",apiPrefix)
-                            ).hasAnyRole(Role.ADMIN,Role.USER)
-
-                            .requestMatchers(String.format("%s/oauth2/login/google", apiPrefix)).permitAll()
-                            .requestMatchers(String.format("%s/oauth2/login/facebook", apiPrefix)).permitAll()
-                            .requestMatchers(String.format("%s/emails/users/**", apiPrefix)).permitAll()
-                            .requestMatchers(String.format("%s/emails/users", apiPrefix)).permitAll()
-                            .requestMatchers(String.format("%s/facebooks/users/**", apiPrefix)).permitAll()
-                            .requestMatchers(String.format("%s/facebooks/users", apiPrefix)).permitAll()
-                            .requestMatchers(String.format("%s/users/login/oauth2/**", apiPrefix)).permitAll()
-                            .requestMatchers(String.format("%s/users/phone_number", apiPrefix)).permitAll()
-                            .requestMatchers(String.format("%s/users/phone/**", apiPrefix)).permitAll()
-
-
-                            .requestMatchers(HttpMethod.PUT,
-                                    String.format("%s/users/update-user**",apiPrefix)).hasAnyRole(Role.ADMIN)
-
-                            .requestMatchers(HttpMethod.POST,
-                                    String.format("%s/users/changes-password/**",apiPrefix))
-                            .hasAnyRole(Role.ADMIN,Role.USER)
-
-                            .requestMatchers(HttpMethod.POST,
-                                    String.format("%s/users/details/**",apiPrefix)
-                            ).hasAnyRole(Role.ADMIN,Role.USER)
-
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/roles**",apiPrefix))
-                            .permitAll()
-
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/users**",apiPrefix)).hasRole(Role.ADMIN)
-
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/users/get-districts/**",apiPrefix)).permitAll()
-
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/users/get-provinces",apiPrefix)).permitAll()
-
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/users/get-communes/**",apiPrefix)).permitAll()
-
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/users/upload/image",apiPrefix)).hasAnyRole(Role.ADMIN, Role.USER)
-
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/categories**",apiPrefix)).permitAll()
-
-                            .requestMatchers(HttpMethod.POST,
-                                    String.format("%s/categories/**",apiPrefix)).hasAnyRole(Role.ADMIN)
-
-                            .requestMatchers(HttpMethod.PUT,
-                                    String.format("%s/categories/**",apiPrefix)).hasAnyRole(Role.ADMIN)
-
-                            .requestMatchers(HttpMethod.DELETE,
-                                    String.format("%s/categories/**",apiPrefix)).hasAnyRole(Role.ADMIN)
-// ---------------------------------------------------------------------------------------------------------------------------------------------------
-                            .requestMatchers(HttpMethod.POST,
-                                    String.format("%s/comments/create_comment/**",apiPrefix)
-                            ).hasAnyRole(Role.ADMIN, Role.USER)
-
-                            .requestMatchers(HttpMethod.POST,
-                                    String.format("%s/comments/get_comments_by_id/**",apiPrefix)
-                            ).hasAnyRole(Role.ADMIN, Role.USER)
-                            .requestMatchers(HttpMethod.POST,
-                                    String.format("%s/comments**",apiPrefix)
-                            ).permitAll()
-// ---------------------------------------------------------------------------------------------------------------------------------------------------
-
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/products**",apiPrefix)).permitAll()
-
-                            .requestMatchers(HttpMethod.POST,
-                                    String.format("%s/products/**",apiPrefix)).hasAnyRole(Role.ADMIN)
-
-                            .requestMatchers(HttpMethod.PUT,
-                                    String.format("%s/products/**",apiPrefix)).hasAnyRole(Role.ADMIN)
-
-                            .requestMatchers(HttpMethod.DELETE,
-                                    String.format("%s/products/**",apiPrefix)).hasAnyRole(Role.ADMIN)
-
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/products/images/**", apiPrefix)).permitAll()
-
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/products/images/detail/*",apiPrefix)).permitAll()
-
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/products/**",apiPrefix)).permitAll()
-
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/products/by-**",apiPrefix)).permitAll()
-
-// ---------------------------------------------------------------------------------------------------------------------------------------------------
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/orders/**",apiPrefix)).permitAll()
-
-                            .requestMatchers(HttpMethod.POST,
-                                    String.format("%s/orders/list/**",apiPrefix)).hasAnyRole(Role.USER, Role.ADMIN)
-
-                            .requestMatchers(HttpMethod.POST,
-                                    String.format("%s/orders/**",apiPrefix)).hasAnyRole(Role.USER, Role.ADMIN)
-
-                            .requestMatchers(HttpMethod.DELETE,
-                                    String.format("%s/orders/**",apiPrefix)).hasAnyRole(Role.ADMIN)
-
-
-                            .requestMatchers(HttpMethod.PUT,
-                                    String.format("%s/orders/**", apiPrefix)).hasAnyRole(Role.ADMIN)
-
-                            .requestMatchers(
-                                    HttpMethod.GET,
-                                    String.format("%s/orders/get_orders_by_user_id/**", apiPrefix)
-                            ).hasAnyRole(Role.ADMIN, Role.USER)
-
-                            .requestMatchers(
-                                    HttpMethod.GET,
-                                    String.format("%s/orders/get_delivered_orders/**", apiPrefix)
-                            ).permitAll()
-
-// ---------------------------------------------------------------------------------------------------------------------------------------------------
-
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/order_details/**",apiPrefix)).hasAnyRole(Role.ADMIN, Role.USER)
-
-                            .requestMatchers(HttpMethod.POST,
-                                    String.format("%s/order_details/**",apiPrefix)).hasAnyRole(Role.USER)
-
-                            .requestMatchers(HttpMethod.PUT,
-                                    String.format("%s/order_details/**",apiPrefix)).hasAnyRole(Role.ADMIN)
-
-                            .requestMatchers(HttpMethod.DELETE,
-                                    String.format("%s/order_details/**",apiPrefix)).hasAnyRole(Role.ADMIN)
-
-// ---------------------------------------------------------------------------------------------------------------------------------------------------
-
-                            .requestMatchers(HttpMethod.POST,
-                                    String.format("%s/coupons/**",apiPrefix)).hasAnyRole(Role.ADMIN)
-
-                            .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/coupons/list**",apiPrefix)).hasAnyRole(Role.ADMIN, Role.USER)
-
-                            .requestMatchers(HttpMethod.PUT,
-                                    String.format("%s/coupons/**",apiPrefix)).hasAnyRole(Role.ADMIN)
-
-                            .requestMatchers(HttpMethod.DELETE,
-                                    String.format("%s/coupons/**",apiPrefix)).hasAnyRole(Role.ADMIN)
-
-
                             .anyRequest().permitAll();
                 })
-                .csrf(AbstractHttpConfigurer::disable)
                 .oauth2Login(withDefaults());
         http.cors(Customizer.withDefaults());
 
-//        http.securityMatcher(String.valueOf(EndpointRequest.toAnyEndpoint()));
         http.oauth2Login(oauth2 -> oauth2.successHandler(authenticationSuccessHandler()));
         http.cors(new Customizer<CorsConfigurer<HttpSecurity>>() {
             @Override
