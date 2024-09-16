@@ -53,10 +53,6 @@ public class CommentController {
     public ResponseEntity<ResponseObject> getCommentByProduct(
             @PathVariable ("id") Long productId
     )throws DataNotFoundException {
-        User loginUser = securityUtils.getLoggedInUser();
-        if(loginUser == null){
-            return ResponseEntity.ok(ResponseObject.builder().message("no").build());
-        }
         List<CommentResponse> commentResponses = commentService.getCommentsByProduct(productId);
         return ResponseEntity.ok(ResponseObject.builder()
                         .message("get all comment by product successfully")

@@ -13,6 +13,7 @@ import com.project.shopapp.responses.user.LoginResponse;
 import com.project.shopapp.responses.user.UserListResponse;
 import com.project.shopapp.responses.user.UserResponse;
 import com.project.shopapp.services.Email.EmailService;
+import com.project.shopapp.services.OAuth2.IAuthService;
 import com.project.shopapp.services.token.ITokenService;
 import com.project.shopapp.services.user.IUserService;
 import com.project.shopapp.components.LocalizationUtils;
@@ -55,6 +56,7 @@ public class UserController {
     private final SecurityUtils securityUtils;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final IAuthService authService;
 
     @GetMapping("existingUser")
     public ResponseEntity<?> existingUser(
@@ -221,6 +223,51 @@ public class UserController {
                     )
                     .build());
         }
+    }
+    @GetMapping("/auth/social-login")
+    public ResponseEntity<String> socialAuth(@RequestParam("login_type") String loginType){
+        loginType = loginType.trim().toLowerCase();  // Loại bỏ dấu cách và chuyển thành chữ thường
+        String url = authService.generateAuthUrl(loginType);
+        return ResponseEntity.ok(url);
+    }
+
+    @GetMapping("/auth/social/callback")
+    public ResponseEntity<ResponseObject> callback(
+            @RequestParam("code") String code,
+            @RequestParam("login_type") String loginType,
+            HttpServletRequest request
+    ) throws Exception {
+        // Call the AuthService to get user info
+        Map<String, Object> userInfo = authService.authenticateAndFetchProfile(code, loginType);
+
+        if (userInfo == null) {
+            return ResponseEntity.badRequest().body(new ResponseObject(
+                    "Failed to authenticate", HttpStatus.BAD_REQUEST, null
+            ));
+        }
+
+        // Extract user information from userInfo map
+        String googleAccountId = (String) userInfo.get("sub");
+        String name = (String) userInfo.get("name");
+        String givenName = (String) userInfo.get("given_name");
+        String familyName = (String) userInfo.get("family_name");
+        String picture = (String) userInfo.get("picture");
+        String email = (String) userInfo.get("email");
+        Boolean emailVerified = (Boolean) userInfo.get("email_verified");
+        UserLoginDTO userLoginDTO = UserLoginDTO.builder()
+                .email(email)
+                .fullname(name)
+                .facebookAccountId("")
+                .password("")
+                .phoneNumber("")
+                .profileImage(picture)
+                .build();
+        if (loginType.trim().equals("google")) {
+            userLoginDTO.setGoogleAccountId(googleAccountId);
+        } else if (loginType.trim().equals("facebook")) {
+            userLoginDTO.setFacebookAccountId("");
+        }
+        return this.login(userLoginDTO, request);
     }
     @GetMapping("/login/google")
     public Map<String, Object> currentUserGoogle(
