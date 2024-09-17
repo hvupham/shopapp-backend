@@ -7,14 +7,19 @@ spring:
     allow-circular-references: true
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/shopapp?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    #url: ${SPRING_DATASOURCE_URL:jdbc:mysql://ubuntu-server-01.local:3399/ShopApp?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: ${MYSQL_ROOT_PASSWORD:Abc123456789@}
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: none
-
+      ddl-auto: none #chỗ này mà sửa thành drop-create thì rất nguy
+      #ddl-auto: validate
+      #Hibernate sẽ không tạo, sửa đổi hoặc xóa bất kỳ bảng, cột hay ràng buộc nào trong cơ sở dữ liệu
+      #validate thường được sử dụng trong môi trường production
+      #Nếu có sự khác biệt giữa cấu trúc cơ sở dữ liệu và các entity class
+      #lỗi sẽ được hiển thị và yêu cầu sửa đổi cấu trúc cơ sở dữ liệu một cách thủ công
     properties:
       hibernate:
       dialect: org.hibernate.dialect.MySQL8Dialect
@@ -59,23 +64,16 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID}
+            clientId: ${GOOGLE_CLIENT_ID}
 
-            client-secret: ${GOOGLE_CLIENT_SECRET}
-            redirect-uri: "${GOOGLE_REDIRECT_URI:http://localhost:4200}"
+            clientSecret: ${GOOGLE_CLIENT_SECRET}
+            redirectUri: "http://localhost:8088/login/oauth2/code/google"
 #            redirectUri: "localhost://{api.prefix}/login/oauth2/code/google"
-            resource-server:
-              opaque-token:
-                introspection-uri: "https://oauth2.googleapis.com/tokeninfo"
 
 
           facebook:
-            client-id: 1007654770988152
-            client-secret: 5adb1d315754ac7e7e26b09d4c8b8b17
-            redirect-uri: "${FACEBOOK_REDIRECT_URI:http://localhost:4200}" #sau khi user đăng nhập google thành công sẽ tự redirect đến trang này kèm code(của fb)
-            auth-uri: https://www.facebook.com/v20.0/dialog/oauth
-            token-uri: https://graph.facebook.com/v3.0/oauth/access_token
-            user-info-uri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
+            clientId: YOUR_FACEBOOK_APP_ID
+            clientSecret: YOUR_FACEBOOK_APP_SECRET
             scope:
               - email
               - public_profile

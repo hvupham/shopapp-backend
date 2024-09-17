@@ -103,11 +103,7 @@ public class JwtTokenFilter extends OncePerRequestFilter{
                 Pair.of("/configuration/security","GET"),
                 Pair.of("/swagger-ui/**","GET"),
                 Pair.of("/swagger-ui.html", "GET"),
-                Pair.of("/swagger-ui/index.html", "GET"),
-
-                //Đăng nhập social
-                Pair.of(String.format("%s/users/auth/social-login**", apiPrefix), "GET"),
-                Pair.of(String.format("%s/users/auth/social/callback**", apiPrefix), "GET")
+                Pair.of("/swagger-ui/index.html", "GET")
         );
 
         String requestPath = request.getServletPath();

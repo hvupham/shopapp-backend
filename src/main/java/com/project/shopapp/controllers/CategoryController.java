@@ -30,7 +30,7 @@ public class CategoryController {
 //    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @PostMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     //Nếu tham số truyền vào là 1 object thì sao ? => Data Transfer Object = Request Object
     public ResponseEntity<ResponseObject> createCategory(
             @Valid @RequestBody CategoryDTO categoryDTO,
