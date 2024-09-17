@@ -25,6 +25,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -51,17 +52,18 @@ public class WebSecurityConfig {
     @Value("${api.prefix}")
     private String apiPrefix;
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)  throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(customizer -> customizer.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> {
                     requests
-
-                            .anyRequest().permitAll();
+                            .anyRequest().permitAll(); // Bạn có thể thay đổi cấu hình này để yêu cầu xác thực cho các endpoint cụ thể
                 })
-                .oauth2Login(withDefaults());
+                .oauth2Login(withDefaults())
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class); // Thêm filter JWT
+
         http.cors(Customizer.withDefaults());
 
         http.oauth2Login(oauth2 -> oauth2.successHandler(authenticationSuccessHandler()));
@@ -81,6 +83,7 @@ public class WebSecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
