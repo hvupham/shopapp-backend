@@ -7,7 +7,7 @@ import com.project.shopapp.models.Email;
 import java.util.List;
 
 public interface IEmailService {
-    Email createUser(EmailDTO emailDTO);
+    Email createUser(EmailDTO emailDTO) throws Exception;
     Email GetEmailById(long id) throws DataNotFoundException;
     List<Email> getAllUsers();
     void deleteCoupon(long id);

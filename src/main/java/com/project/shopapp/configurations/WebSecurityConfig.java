@@ -66,7 +66,7 @@ public class WebSecurityConfig {
 
         http.cors(Customizer.withDefaults());
 
-        http.oauth2Login(oauth2 -> oauth2.successHandler(authenticationSuccessHandler()));
+//        http.oauth2Login(oauth2 -> oauth2.successHandler(authenticationSuccessHandler()));
         http.cors(new Customizer<CorsConfigurer<HttpSecurity>>() {
             @Override
             public void customize(CorsConfigurer<HttpSecurity> httpSecurityCorsConfigurer) {
@@ -85,68 +85,68 @@ public class WebSecurityConfig {
     }
 
 
-    @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-
-    return (request, response, authentication) -> {
-        Integer id = 0;
-        String type = "";
-        if (authentication.getPrincipal() instanceof OidcUser) {
-            OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
-            String name = oidcUser.getFullName(); // Lấy tên người dùng
-            String email = oidcUser.getEmail(); // Lấy email người dùng
-            String picture = oidcUser.getPicture();
-            Email existingEmail = emailRepository.findUserByEmail(email);
-            if (existingEmail==null){
-                emailService.createUser(EmailDTO.builder()
-                        .email(email)
-                        .name(name)
-                        .picture(picture)
-                        .build());
-            }
-
-
-            // Tiếp tục lấy các thông tin khác nếu cần
-            // Sau đó thực hiện lưu thông tin vào cơ sở dữ liệu
-            id = this.emailService.getUserByEmail(email).getId();
-            type="email";
-//            User existingUser = userService.findByggId(id);
-//            if (existingUser == null){
-//                try {
-//                    userService.createUser(UserDTO.builder()
-//                            .fullName(name)
-//                            .googleAccountId(id)
-//                            .email(email)
-//                                    .roleId(1L)
-//                            .build());
-//                } catch (Exception e) {
-//                    throw new RuntimeException(e);
-//                }
+//    @Bean
+//    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+//
+//    return (request, response, authentication) -> {
+//        Integer id = 0;
+//        String type = "";
+//        if (authentication.getPrincipal() instanceof OidcUser) {
+//            OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
+//            String name = oidcUser.getFullName(); // Lấy tên người dùng
+//            String email = oidcUser.getEmail(); // Lấy email người dùng
+//            String picture = oidcUser.getPicture();
+//            Email existingEmail = emailRepository.findUserByEmail(email);
+//            if (existingEmail==null){
+//                emailService.createUser(EmailDTO.builder()
+//                        .email(email)
+//                        .name(name)
+//                        .picture(picture)
+//                        .build());
 //            }
-
-
-        } else {
-            if (authentication.getPrincipal() instanceof OAuth2User) {
-                OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
-                String name = oauth2User.getAttribute("name"); // Lấy tên người dùng
-                String email = oauth2User.getAttribute("email"); // Lấy email người dùng
-                String facebookId = oauth2User.getAttribute("id");
-                type = "facebook";
-
-                facebookService.createUser(FacebookDTO.builder()
-                        .facebookId(facebookId)
-                        .email(email)
-                        .name(name)
-                        .build());
-                id = this.facebookService.getFacebookByEmail(email).getId();
-            }
-        }
-        // Thực hiện xử lý sau khi đăng nhập thành công, ví dụ: chuyển hướng
-        if (id!=0) {
-            response.sendRedirect("http://localhost:4200/users/update?id=" + id+"&type="+type);
-        } else {
-            response.sendRedirect("http://localhost:4200");
-        }
-    };
-}
+//
+//
+//            // Tiếp tục lấy các thông tin khác nếu cần
+//            // Sau đó thực hiện lưu thông tin vào cơ sở dữ liệu
+//            id = this.emailService.getUserByEmail(email).getId();
+//            type="email";
+////            User existingUser = userService.findByggId(id);
+////            if (existingUser == null){
+////                try {
+////                    userService.createUser(UserDTO.builder()
+////                            .fullName(name)
+////                            .googleAccountId(id)
+////                            .email(email)
+////                                    .roleId(1L)
+////                            .build());
+////                } catch (Exception e) {
+////                    throw new RuntimeException(e);
+////                }
+////            }
+//
+//
+//        } else {
+//            if (authentication.getPrincipal() instanceof OAuth2User) {
+//                OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+//                String name = oauth2User.getAttribute("name"); // Lấy tên người dùng
+//                String email = oauth2User.getAttribute("email"); // Lấy email người dùng
+//                String facebookId = oauth2User.getAttribute("id");
+//                type = "facebook";
+//
+//                facebookService.createUser(FacebookDTO.builder()
+//                        .facebookId(facebookId)
+//                        .email(email)
+//                        .name(name)
+//                        .build());
+//                id = this.facebookService.getFacebookByEmail(email).getId();
+//            }
+//        }
+//        // Thực hiện xử lý sau khi đăng nhập thành công, ví dụ: chuyển hướng
+//        if (id!=0) {
+//            response.sendRedirect("http://localhost:4200/users/update?id=" + id+"&type="+type);
+//        } else {
+//            response.sendRedirect("http://localhost:4200");
+//        }
+//    };
+//}
 }

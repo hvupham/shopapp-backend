@@ -101,6 +101,7 @@ public class UserService implements IUserService{
         // If the user is not found by phone number, check by email
         if (optionalUser.isEmpty() && userLoginDTO.getEmail() != null) {
             Email existingEmail = emailService.getUserByEmail(userLoginDTO.getEmail());
+
 //            optionalUser = userRepository.findByEmail(userLoginDTO.getEmail());
             optionalUser = userRepository.findUsersByGoogleAccountId(existingEmail.getId());
             subject = userLoginDTO.getEmail();

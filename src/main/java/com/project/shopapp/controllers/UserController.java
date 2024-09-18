@@ -1,13 +1,17 @@
 package com.project.shopapp.controllers;
 
+import com.project.shopapp.components.LocalizationUtils;
 import com.project.shopapp.components.SecurityUtils;
+import com.project.shopapp.dtos.RefreshTokenDTO;
+import com.project.shopapp.dtos.UpdateUserDTO;
+import com.project.shopapp.dtos.UserDTO;
+import com.project.shopapp.dtos.UserLoginDTO;
 import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.exceptions.InvalidPasswordException;
 import com.project.shopapp.models.Email;
 import com.project.shopapp.models.Token;
 import com.project.shopapp.models.User;
 import com.project.shopapp.repositories.UserRepository;
-import com.project.shopapp.responses.CheckSocialAccountResponse;
 import com.project.shopapp.responses.ResponseObject;
 import com.project.shopapp.responses.user.LoginResponse;
 import com.project.shopapp.responses.user.UserListResponse;
@@ -16,7 +20,6 @@ import com.project.shopapp.services.Email.EmailService;
 import com.project.shopapp.services.OAuth2.IAuthService;
 import com.project.shopapp.services.token.ITokenService;
 import com.project.shopapp.services.user.IUserService;
-import com.project.shopapp.components.LocalizationUtils;
 import com.project.shopapp.utils.FileUtils;
 import com.project.shopapp.utils.MessageKeys;
 import com.project.shopapp.utils.ValidationUtils;
@@ -25,7 +28,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -38,7 +40,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import com.project.shopapp.dtos.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -230,14 +231,12 @@ public class UserController {
         String url = authService.generateAuthUrl(loginType);
         return ResponseEntity.ok(url);
     }
-
     @GetMapping("/auth/social/callback")
     public ResponseEntity<ResponseObject> callback(
             @RequestParam("code") String code,
             @RequestParam("login_type") String loginType,
             HttpServletRequest request
     ) throws Exception {
-        // Call the AuthService to get user info
         Map<String, Object> userInfo = authService.authenticateAndFetchProfile(code, loginType);
 
         if (userInfo == null) {
@@ -245,15 +244,10 @@ public class UserController {
                     "Failed to authenticate", HttpStatus.BAD_REQUEST, null
             ));
         }
-
-        // Extract user information from userInfo map
         String googleAccountId = (String) userInfo.get("sub");
         String name = (String) userInfo.get("name");
-        String givenName = (String) userInfo.get("given_name");
-        String familyName = (String) userInfo.get("family_name");
         String picture = (String) userInfo.get("picture");
         String email = (String) userInfo.get("email");
-        Boolean emailVerified = (Boolean) userInfo.get("email_verified");
         UserLoginDTO userLoginDTO = UserLoginDTO.builder()
                 .email(email)
                 .fullname(name)
