@@ -31,8 +31,7 @@ import java.util.Objects;
 public class CommentController {
     private final CommentService commentService;
     private final SecurityUtils securityUtils;
-    private final EmailService emailService;
-    @GetMapping("/user/comment")
+    @GetMapping("")
     public ResponseEntity<ResponseObject> getAllComments(
             @RequestParam(value = "user_id", required = false) Long userId,
             @RequestParam("product_id") Long productId
@@ -58,18 +57,6 @@ public class CommentController {
                         .message("get all comment by product successfully")
                         .data(commentResponses)
                         .status(HttpStatus.OK)
-                .build());
-    }
-    @GetMapping("/emails/{id}")
-//    @PreAuthorize("permitAll()")
-    public ResponseEntity<?> getUsers(
-            @PathVariable("id") Long id
-    ) throws DataNotFoundException {
-        Email emailResponse = this.emailService.GetEmailById(id);
-        return ResponseEntity.ok(ResponseObject.builder()
-                .data(emailResponse)
-                .message("Get email information successfully")
-                .status(HttpStatus.OK)
                 .build());
     }
     @PutMapping("/{id}")

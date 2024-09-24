@@ -42,7 +42,7 @@ public class User extends BaseEntity implements UserDetails, OAuth2User {
     @Column(name = "profile_image", length = 255)
     private String profileImage;
 
-    @Column(name = "password", length = 200, nullable = false)
+    @Column(name = "password", length = 200, nullable = true)
     private String password;
 
     @Column(name = "is_active")
@@ -66,7 +66,6 @@ public class User extends BaseEntity implements UserDetails, OAuth2User {
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
         authorityList.add(new SimpleGrantedAuthority("ROLE_"+getRole().getName().toUpperCase()));
         //authorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-
         return authorityList;
     }
     @Override
@@ -78,7 +77,6 @@ public class User extends BaseEntity implements UserDetails, OAuth2User {
         }
         return "";
     }
-
 
     @Override
     public boolean isAccountNonExpired() {
