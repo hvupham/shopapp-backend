@@ -44,11 +44,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
-    private final EmailService emailService;
-    private final FacebookService facebookService;
-    private final EmailRepository emailRepository;
-
-
     @Value("${api.prefix}")
     private String apiPrefix;
 

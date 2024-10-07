@@ -3,6 +3,7 @@ package com.project.shopapp.controllers;
 import com.project.shopapp.components.LocalizationUtils;
 //import com.project.shopapp.components.converters.CategoryMessageConverter;
 //import com.project.shopapp.components.converters.CategoryMessageConverter;
+import com.project.shopapp.components.converters.CategoryMessageConverter;
 import com.project.shopapp.dtos.*;
 import com.project.shopapp.models.Category;
 import com.project.shopapp.responses.ResponseObject;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -27,11 +29,9 @@ import java.util.List;
 public class CategoryController {
     private final CategoryService categoryService;
     private final LocalizationUtils localizationUtils;
-//    private final KafkaTemplate<String, Object> kafkaTemplate;
-
+    private final KafkaTemplate<String, Object> kafkaTemplate;
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    //Nếu tham số truyền vào là 1 object thì sao ? => Data Transfer Object = Request Object
     public ResponseEntity<ResponseObject> createCategory(
             @Valid @RequestBody CategoryDTO categoryDTO,
             BindingResult result) {
@@ -48,8 +48,8 @@ public class CategoryController {
 
         }
         Category category = categoryService.createCategory(categoryDTO);
-//        this.kafkaTemplate.send("insert-a-category", category);//producer
-//        this.kafkaTemplate.setMessageConverter(new CategoryMessageConverter());
+        this.kafkaTemplate.send("insert-a-category", category);//producer
+        this.kafkaTemplate.setMessageConverter(new CategoryMessageConverter());
         return ResponseEntity.ok().body(ResponseObject.builder()
                 .message("Create category successfully")
                 .status(HttpStatus.OK)
@@ -70,7 +70,7 @@ public class CategoryController {
             return null;
         });
          */
-//        this.kafkaTemplate.send("get-all-categories", categories);
+        this.kafkaTemplate.send("get-all-categories", categories);
         return ResponseEntity.ok(ResponseObject.builder()
                         .message("Get list of categories successfully")
                         .status(HttpStatus.OK)
