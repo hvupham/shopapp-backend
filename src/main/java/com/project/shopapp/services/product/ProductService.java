@@ -74,6 +74,7 @@ public class ProductService implements IProductService{
         // Lấy danh sách sản phẩm theo trang (page), giới hạn (limit), và categoryId (nếu có)
         Page<Product> productsPage;
         productsPage = productRepository.searchProducts(categoryId, keyword, pageRequest);
+        System.out.println(productsPage);
         return productsPage.map(ProductResponse::fromProduct);
     }
     @Override

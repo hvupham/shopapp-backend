@@ -8,6 +8,7 @@ import com.project.shopapp.models.ProductImage;
 import com.project.shopapp.responses.BaseResponse;
 import com.project.shopapp.responses.comment.CommentResponse;
 import com.project.shopapp.responses.favorite.FavoriteResponse;
+import jakarta.persistence.Column;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -40,6 +41,9 @@ public class ProductResponse extends BaseResponse {
 
     @JsonProperty("category_id")
     private Long categoryId;
+
+    @JsonProperty("color")
+    private String color;
     public static ProductResponse fromProduct(Product product) {
         List<Comment> comments = product.getComments()
                 .stream()
@@ -57,6 +61,7 @@ public class ProductResponse extends BaseResponse {
                 .categoryId(product.getCategory().getId())
                 .productImages(product.getProductImages())
                 .totalPages(0)
+                .color(product.getColor())
                 .build();
         productResponse.setCreatedAt(product.getCreatedAt());
         productResponse.setUpdatedAt(product.getUpdatedAt());
