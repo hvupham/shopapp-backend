@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 @Table(name = "emails")
 public class Email {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;
 
     @Column(name = "picture")
     private String picture;

@@ -28,11 +28,11 @@ public class UserLoginDTO {
 
     // Facebook Account Id, not mandatory, can be blank
     @JsonProperty("facebook_account_id")
-    private String facebookAccountId;
+    private String facebookAccountId = "";
 
     // Google Account Id, not mandatory, can be blank
     @JsonProperty("google_account_id")
-    private String googleAccountId;
+    private String googleAccountId = "";
 
     //For Google, Facebook login
     // Full name, not mandatory, can be blank
@@ -53,6 +53,6 @@ public class UserLoginDTO {
 
     // Kiểm tra googleAccountId có hợp lệ không
     public boolean isGoogleAccountIdValid() {
-        return googleAccountId != null && !googleAccountId.isEmpty();
+        return googleAccountId != "" && !googleAccountId.isEmpty();
     }
 }

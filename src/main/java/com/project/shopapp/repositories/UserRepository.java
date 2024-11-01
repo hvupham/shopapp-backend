@@ -14,12 +14,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByPhoneNumber(String phoneNumber);
     boolean existsByEmail(String email);
 
-    boolean existsByGoogleAccountId(Long id);
+    boolean existsByGoogleAccountId(String id);
     Optional<User> findByPhoneNumber(String phoneNumber);
     Optional<User> findByEmail(String email);
 
-    Optional<User> findUsersByGoogleAccountId(Integer id);
-    User findByGoogleAccountId(Integer id);
+    Optional<User> findUsersByGoogleAccountId(String id);
+    User findByGoogleAccountId(String id);
     User findUsersByPhoneNumber(String phone);
     //SELECT * FROM users WHERE phoneNumber=?
     //query command

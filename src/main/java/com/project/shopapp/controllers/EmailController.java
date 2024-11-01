@@ -47,7 +47,7 @@ public class EmailController {
     public ResponseEntity<?> getAllUsers(
             @RequestParam("email") String email
     ) throws DataNotFoundException {
-        if (this.emailService.getUserByEmail(email).getId()<=0){
+        if (this.emailService.getUserByEmail(email).getId() != ""){
             return ResponseEntity.ok(
                     CheckSocialAccountResponse.builder()
                             .message("failed")

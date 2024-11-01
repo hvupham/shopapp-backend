@@ -46,16 +46,16 @@ public class User extends BaseEntity implements UserDetails, OAuth2User {
     private String password;
 
     @Column(name = "is_active")
-    private boolean active;
+    private boolean active = true;
 
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
 
     @Column(name = "facebook_account_id")
-    private int facebookAccountId;
+    private String facebookAccountId = "";
 
     @Column(name = "google_account_id")
-    private int googleAccountId;
+    private String googleAccountId = "";
 
     @ManyToOne
     @JoinColumn(name = "role_id")
