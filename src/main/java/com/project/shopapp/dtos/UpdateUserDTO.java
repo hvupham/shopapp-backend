@@ -31,8 +31,8 @@ public class UpdateUserDTO {
     private Date dateOfBirth;
 
     @JsonProperty("facebook_account_id")
-    private int facebookAccountId;
+    private String facebookAccountId;
 
     @JsonProperty("google_account_id")
-    private int googleAccountId;
+    private String googleAccountId;
 }

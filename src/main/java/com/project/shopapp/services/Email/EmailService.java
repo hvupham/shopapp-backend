@@ -19,7 +19,7 @@ public class EmailService implements IEmailService{
         Integer nextId = (lastId == null) ? 1 : lastId + 1;
         if (emailRepository.findByEmail(emailDTO.getEmail()).isEmpty()){
             Email email  = Email.builder()
-                    .id(nextId)
+                    .id(nextId.toString())
                     .email(emailDTO.getEmail())
                     .name(emailDTO.getName())
                     .picture(emailDTO.getPicture())

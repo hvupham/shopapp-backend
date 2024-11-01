@@ -35,10 +35,10 @@ public class UserDTO {
     private Date dateOfBirth = new Date();
 
     @JsonProperty("facebook_account_id")
-    private int facebookAccountId = 0;
+    private String facebookAccountId ;
 
     @JsonProperty("google_account_id")
-    private int googleAccountId = 0;
+    private String googleAccountId ;
 
     @NotNull(message = "Role ID is required")
     @JsonProperty("role_id")

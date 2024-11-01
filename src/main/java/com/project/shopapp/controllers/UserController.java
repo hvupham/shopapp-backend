@@ -61,7 +61,7 @@ public class UserController {
 
     @GetMapping("existingUser")
     public ResponseEntity<?> existingUser(
-            @RequestParam(defaultValue = " ") Long gg_id
+            @RequestParam(defaultValue = " ") String gg_id
     ){
         return ResponseEntity.ok().body(ResponseObject.builder()
                         .status(HttpStatus.OK)
@@ -198,7 +198,6 @@ public class UserController {
             HttpServletRequest request
 
 ) {
-
         try {
             String token = userService.loginByOAuth2(email);
             String userAgent = request.getHeader("User-Agent");

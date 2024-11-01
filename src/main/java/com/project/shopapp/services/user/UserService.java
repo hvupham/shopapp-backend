@@ -29,7 +29,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import static com.project.shopapp.utils.ValidationUtils.isValidEmail;
 @RequiredArgsConstructor
@@ -74,7 +76,7 @@ public class UserService implements IUserService{
                 .build();
         newUser.setRole(role);
         // Kiểm tra nếu có accountId, không yêu cầu password
-        if (userDTO.getFacebookAccountId() == 0 && userDTO.getGoogleAccountId() == 0) {
+        if (userDTO.getFacebookAccountId() == "" && userDTO.getGoogleAccountId() == "") {
             String password = userDTO.getPassword();
             String encodedPassword = passwordEncoder.encode(password);
             newUser.setPassword(encodedPassword);
@@ -83,15 +85,36 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public User findByggId(Integer id)  {
+    public User findByggId(String id)  {
         return userRepository.findByGoogleAccountId(id);
     }
     @Override
     public String login(UserLoginDTO userLoginDTO) throws Exception {
         Optional<User> optionalUser = Optional.empty();
         String subject = null;
+        if (userLoginDTO.getGoogleAccountId() != "" && userLoginDTO.isGoogleAccountIdValid()){
+            optionalUser = userRepository.findUsersByGoogleAccountId(userLoginDTO.getGoogleAccountId());
+            subject = "Google" + userLoginDTO.getGoogleAccountId();
+            if (optionalUser.isEmpty()){
+                Role role = roleRepository.findById(1L).get();
+                User newUser = User.builder()
+                        .fullName(userLoginDTO.getFullname() != null ? userLoginDTO.getFullname() : " ")
+                        .email(userLoginDTO.getEmail())
+                        .profileImage(userLoginDTO.getProfileImage())
+                        .googleAccountId(userLoginDTO.getGoogleAccountId())
+                        .password("")
+                        .role(role)
+                        .active(true)
+                        .build();
+                userRepository.save(newUser);
+                optionalUser = Optional.of(newUser);
+            }
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("email", userLoginDTO.getEmail());
+            return jwtTokenUtil.generateToken(optionalUser.get());
+        }
         // Check if the user exists by phone number
-        if (userLoginDTO.getPhoneNumber() != null && !userLoginDTO.getPhoneNumber().isBlank()) {
+        else if (userLoginDTO.getPhoneNumber() != null && !userLoginDTO.getPhoneNumber().isBlank()) {
             optionalUser = userRepository.findByPhoneNumber(userLoginDTO.getPhoneNumber());
             subject = userLoginDTO.getPhoneNumber();
         }
@@ -121,7 +144,6 @@ public class UserService implements IUserService{
             optionalUser = userRepository.findUsersByGoogleAccountId(existingEmail.getId());
             subject = userLoginDTO.getEmail();
         }
-
         // If user is not found, throw an exception
         if (optionalUser.isEmpty()) {
             throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.WRONG_PHONE_PASSWORD));
@@ -131,8 +153,8 @@ public class UserService implements IUserService{
         User existingUser = optionalUser.get();
 
         //check password
-        if (existingUser.getFacebookAccountId() == 0
-                && existingUser.getGoogleAccountId() == 0) {
+        if (existingUser.getFacebookAccountId() == ""
+                && existingUser.getGoogleAccountId() == "") {
             if(!passwordEncoder.matches(userLoginDTO.getPassword(), existingUser.getPassword())) {
                 throw new BadCredentialsException(localizationUtils.getLocalizedMessage(MessageKeys.WRONG_PHONE_PASSWORD));
             }
@@ -176,10 +198,10 @@ public class UserService implements IUserService{
         if (updatedUserDTO.getDateOfBirth() != null) {
             existingUser.setDateOfBirth(updatedUserDTO.getDateOfBirth());
         }
-        if (updatedUserDTO.getFacebookAccountId() > 0) {
+        if (updatedUserDTO.getFacebookAccountId() != "") {
             existingUser.setFacebookAccountId(updatedUserDTO.getFacebookAccountId());
         }
-        if (updatedUserDTO.getGoogleAccountId() > 0) {
+        if (updatedUserDTO.getGoogleAccountId() != "") {
             existingUser.setGoogleAccountId(updatedUserDTO.getGoogleAccountId());
         }
 

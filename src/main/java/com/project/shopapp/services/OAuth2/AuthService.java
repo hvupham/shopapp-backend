@@ -83,13 +83,9 @@ public class AuthService implements IAuthService{
                         code,
                         googleRedirectUri
                 ).execute().getAccessToken();
-
-                // Set the URL for the Google API to fetch user info
                 url = "https://www.googleapis.com/oauth2/v3/userinfo";
                 break;
-
             case "facebook":
-                // Facebook token request setup
                 url = UriComponentsBuilder
                         .fromUriString("https://graph.facebook.com/v20.0/oauth/access_token")
                         .queryParam("client_id", facebookClientId)
@@ -97,15 +93,10 @@ public class AuthService implements IAuthService{
                         .queryParam("client_secret", facebookClientSecret)
                         .queryParam("code", code)
                         .toUriString();
-
-                // Use RestTemplate to fetch the Facebook access token
                 Map<String, Object> response = gson.fromJson(restTemplate.getForObject(url, String.class), Map.class);
                 accessToken = (String) response.get("access_token");
-
-                // Set the URL for the Facebook API to fetch user info
                 url = "https://graph.facebook.com/me?fields=id,name,first_name,last_name,email,picture{url}";
                 break;
-
             default:
                 System.out.println("Unsupported login type: " + loginType);
                 return null;
